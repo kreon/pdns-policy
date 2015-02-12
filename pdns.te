@@ -1,0 +1,83 @@
+policy_module(pdns, 1.0.0)
+
+########################################
+#
+# Declarations
+#
+
+type pdns_t;
+type pdns_exec_t;
+init_daemon_domain(pdns_t, pdns_exec_t)
+
+permissive pdns_t;
+
+type pdns_initrc_exec_t;
+init_script_file(pdns_initrc_exec_t)
+
+type pdns_unit_file_t;
+systemd_unit_file(pdns_unit_file_t)
+
+type pdns_conf_t;
+files_config_file(pdns_conf_t)
+
+type pdns_var_run_t;
+files_pid_file(pdns_var_run_t)
+
+type pdns_control_t;
+type pdns_control_exec_t;
+init_system_domain(pdns_control_t, pdns_control_exec_t)
+
+type pdns_control_tmp_t;
+files_tmp_file(pdns_control_tmp_t)
+files_tmp_filetrans(pdns_control_t, pdns_control_tmp_t, { file sock_file })
+
+########################################
+#
+# pdns local policy
+#
+
+allow pdns_t self:capability { setuid setgid chown };
+allow pdns_t self:tcp_socket create_stream_socket_perms;
+allow pdns_t self:udp_socket create_socket_perms;
+allow pdns_t self:unix_dgram_socket create_socket_perms;
+allow pdns_t pdns_conf_t:file read_file_perms;
+allow pdns_t pdns_conf_t:dir search;
+
+corenet_tcp_bind_dns_port(pdns_t)
+corenet_udp_bind_dns_port(pdns_t)
+
+files_pid_filetrans(pdns_t, pdns_var_run_t, { file sock_file })
+manage_files_pattern(pdns_t, pdns_var_run_t, pdns_var_run_t)
+manage_sock_files_pattern(pdns_t, pdns_var_run_t, pdns_var_run_t)
+
+auth_use_nsswitch(pdns_t)
+
+dev_read_urand(pdns_t)
+
+logging_send_syslog_msg(pdns_t)
+
+
+########################################
+#
+# pdns_control local policy
+#
+
+allow pdns_control_t pdns_conf_t:file read_file_perms;
+stream_connect_pattern(pdns_control_t, pdns_var_run_t, pdns_var_run_t, pdns_t)
+manage_files_pattern(pdns_control_t, pdns_control_tmp_t, pdns_control_tmp_t)
+manage_sock_files_pattern(pdns_control_t, pdns_control_tmp_t, pdns_control_tmp_t)
+
+
+########################################
+#
+# optional policy
+#
+
+optional_policy(`
+	mysql_read_config(pdns_t)
+	mysql_stream_connect(pdns_t)
+')
+
+optional_policy(`
+	postgresql_stream_connect(pdns_t)
+')

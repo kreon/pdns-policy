@@ -1,0 +1,41 @@
+## <summary>PowerDNS DNS server.</summary>
+
+########################################
+## <summary>
+##      Execute pdns in the pdns domain.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed to transition.
+##      </summary>
+## </param>
+#
+
+interface(`pdns_domtrans',`
+	gen_require(`
+		type pdns_t, pdns_exec_t;
+	')
+
+	domtrans_pattern($1, pdns_exec_t, pdns_t)
+')
+
+########################################
+## <summary>
+##      Execute pdns_control in the pdns_control domain.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed to transition.
+##      </summary>
+## </param>
+#
+interface(`pdns_domtrans_pdns_control',`
+        gen_require(`
+                type pdns_control_t, pdns_control_exec_t;
+        ')
+
+        corecmd_search_bin($1)
+        domtrans_pattern($1, pdns_control_exec_t, pdns_control_t)
+')
+
+
