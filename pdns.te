@@ -31,7 +31,7 @@ files_tmp_filetrans(pdns_control_t, pdns_control_tmp_t, { file sock_file })
 
 ########################################
 #
-# pdns local policy
+# pdns_t local policy
 #
 
 allow pdns_t self:capability { setuid setgid chown };
@@ -57,7 +57,7 @@ logging_send_syslog_msg(pdns_t)
 
 ########################################
 #
-# pdns_control local policy
+# pdns_control_t local policy
 #
 
 allow pdns_control_t pdns_conf_t:file read_file_perms;
