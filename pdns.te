@@ -9,8 +9,6 @@ type pdns_t;
 type pdns_exec_t;
 init_daemon_domain(pdns_t, pdns_exec_t)
 
-permissive pdns_t;
-
 type pdns_initrc_exec_t;
 init_script_file(pdns_initrc_exec_t)
 
