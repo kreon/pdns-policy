@@ -38,8 +38,7 @@ allow pdns_t self:capability { setuid setgid chown };
 allow pdns_t self:tcp_socket create_stream_socket_perms;
 allow pdns_t self:udp_socket create_socket_perms;
 allow pdns_t self:unix_dgram_socket create_socket_perms;
-allow pdns_t pdns_conf_t:file read_file_perms;
-allow pdns_t pdns_conf_t:dir search;
+pdns_read_config(pdns_t)
 
 corenet_tcp_bind_dns_port(pdns_t)
 corenet_udp_bind_dns_port(pdns_t)
@@ -60,7 +59,7 @@ logging_send_syslog_msg(pdns_t)
 # pdns_control_t local policy
 #
 
-allow pdns_control_t pdns_conf_t:file read_file_perms;
+pdns_read_config(pdns_control_t)
 stream_connect_pattern(pdns_control_t, pdns_var_run_t, pdns_var_run_t, pdns_t)
 manage_files_pattern(pdns_control_t, pdns_control_tmp_t, pdns_control_tmp_t)
 manage_sock_files_pattern(pdns_control_t, pdns_control_tmp_t, pdns_control_tmp_t)
